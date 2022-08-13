@@ -1,23 +1,50 @@
-#include <Servo.h>
+#include <Arduino.h>
+
+#include <ESP32Servo.h>
 #include <AccelStepper.h>
 #include <Wire.h>
 #include <Adafruit_TCS34725.h>
 
-#define dirPin 2 //Stepper
-#define stepPin 3 //Stepper
-#define motorInterfaceType 1 //Stepper
-#define stepperMulti 100 //Stepper
+#define STEPPER_DIR_PIN 12 // Stepper dir pin
+#define STEPPER_STEP_PIN 0 // Stepper step pin
+#define motorInterfaceType 1 // Stepper parameter
+#define stepperMulti 100 // Stepper another parameter
 
-#define motorSpeed 255 //Container Motor
-#define GSM2 5 // Container Motor
-#define in3 7 //Container Motor
-#define in4 6 //Container Motor
+#define motorSpeed 255 // Container Motor
+#define HBRIDGE_ENABLE_PIN 4 // Container Motor PWM
+#define HBRIDGE_DIR1_PIN 25 // H Bridge input direction
+#define HBRIDGE_DIR2_PIN 32 // H Bridge input direction
 
-#define setupPin 11 //Setup
-#define photoSensorPin A0 //Photo Sensor
+#define SERVO_PIN 2 // PWM
+
+#define SETUP_PIN 33 // Setup
+#define PHOTO_SENSOR_PIN A0 // Photo Sensor
 #define nullScanOffset 200 
 
-#define angle 15 //Servo
+#define ANGLE 15 // Servo step angle
+
+void addColor();
+void servoFeedIn();
+void servoFeedOut();
+void readColorSensor();
+int addColorToMedianColors(int noOfTest);
+int getNextFreeArrayPlace();
+void clearMedianColors();
+void calcMedianAndStore();
+void importDefaultColorSet();
+String getColorNameFromNo(int colorNo);
+void storeColor(int index, int red, int green, int blue);
+boolean nullScan();
+void setNullScanValues();
+void sortBeadToDynamicArray();
+int getContainerNo(int colorIndex);
+int getNextContainerNo(int colorIndex);
+bool allContainerFull();
+void copyColorsToTemp();
+void moveSorterToPosition(int position);
+void stopMotor();
+void startMotor();
+void reverseContainerMotor();
 
 // Parameters: https://learn.adafruit.com/adafruit-color-sensors/program-it
 //Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_24MS, TCS34725_GAIN_1X);
@@ -30,7 +57,7 @@ float thresholdFactor = 0.04;
 int offset = 40;
 
 Servo servo;
-AccelStepper stepper = AccelStepper(motorInterfaceType, stepPin, dirPin);
+AccelStepper stepper = AccelStepper(motorInterfaceType, STEPPER_STEP_PIN, STEPPER_DIR_PIN);
 
 boolean autoSort = true;
 int errorCounter = 0;
@@ -52,20 +79,23 @@ const int dynamicContainerArraySize = 16;
 int dynamicContainerArray[dynamicContainerArraySize] = { -1, 666, -1, -1, -1, 666, -1, -1, -1, 666, -1, -1, -1, 666 , -1 , -1};
 
 void setup() {
-  pinMode(GSM2, OUTPUT);
-  pinMode(in3, OUTPUT);
-  pinMode(in4, OUTPUT);
+  pinMode(HBRIDGE_ENABLE_PIN, OUTPUT);
+  pinMode(HBRIDGE_DIR1_PIN, OUTPUT);
+  pinMode(HBRIDGE_DIR2_PIN, OUTPUT);
+  
+  pinMode(17, OUTPUT);
+  digitalWrite(17, HIGH);
 
-  pinMode(setupPin, INPUT);
+  pinMode(SETUP_PIN, INPUT);
   //  pinMode(stepperTunerPin, INPUT);
 
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("");
   Serial.println("BeadSorter start");
 
   //Serial.println("Analyzer start");
-  servo.attach(8);
-  servo.write(angle);
+  servo.attach(SERVO_PIN);
+  servo.write(ANGLE);
 
   //stepper.setMaxSpeed(4000);
   //stepper.setAcceleration(5000);
@@ -103,25 +133,26 @@ void setup() {
 }
 
 void loop() {
-  photoSensor = analogRead(photoSensorPin);
+    Serial.println("Loop start");
+  photoSensor = analogRead(PHOTO_SENSOR_PIN);
   //Serial.println("");Serial.println(photoSensor);
 
   if (photoSensor > 750) {
-    if (!digitalRead(in3) && !digitalRead(in4)) {
-      digitalWrite(in3, LOW);  // start
-      digitalWrite(in4, HIGH);
-      analogWrite(GSM2, motorSpeed);
+    if (!digitalRead(HBRIDGE_DIR1_PIN) && !digitalRead(HBRIDGE_DIR2_PIN)) {
+      digitalWrite(HBRIDGE_DIR1_PIN, LOW);  // start
+      digitalWrite(HBRIDGE_DIR2_PIN, HIGH);
+      analogWrite(HBRIDGE_ENABLE_PIN, motorSpeed);
     }
     //Serial.println("Photosensor OK");
   } else {
-    digitalWrite(in3, LOW);  // stop
-    digitalWrite(in4, LOW);
+    digitalWrite(HBRIDGE_DIR1_PIN, LOW);  // stop
+    digitalWrite(HBRIDGE_DIR2_PIN, LOW);
     Serial.println("Photosensor Fail");
-    //analogWrite(GSM2, 0);
+    //analogWrite(HBRIDGE_ENABLE_PIN, 0);
   }
 
-  if (digitalRead(setupPin) == HIGH) {
-    while (digitalRead(setupPin) == HIGH) {
+  if (digitalRead(SETUP_PIN) == HIGH) {
+    while (digitalRead(SETUP_PIN) == HIGH) {
     }
     // for manual colors, there are more restricted thresholds
     autoSort = false;
@@ -172,7 +203,7 @@ void addColor() {
 
   Serial.print("Insert Color to register. Press button when done...");
 
-  while (digitalRead(setupPin) == LOW) {
+  while (digitalRead(SETUP_PIN) == LOW) {
   }
 
   startMotor();
@@ -482,32 +513,32 @@ void moveSorterToPosition(int position) {
 }
 
 void stopMotor() {
-  digitalWrite(in3, LOW);
-  digitalWrite(in4, LOW);
-  analogWrite(GSM2, motorSpeed);
+  digitalWrite(HBRIDGE_DIR1_PIN, LOW);
+  digitalWrite(HBRIDGE_DIR2_PIN, LOW);
+  analogWrite(HBRIDGE_ENABLE_PIN, motorSpeed);
 }
 
 void startMotor() {
-  digitalWrite(in3, HIGH);
-  digitalWrite(in4, LOW);
-  analogWrite(GSM2, motorSpeed);
+  digitalWrite(HBRIDGE_DIR1_PIN, HIGH);
+  digitalWrite(HBRIDGE_DIR2_PIN, LOW);
+  analogWrite(HBRIDGE_ENABLE_PIN, motorSpeed);
 }
 
 void reverseContainerMotor() {
 
-  if (digitalRead(in3)) {
-    digitalWrite(in3, LOW);
+  if (digitalRead(HBRIDGE_DIR1_PIN)) {
+    digitalWrite(HBRIDGE_DIR1_PIN, LOW);
   } else {
-    digitalWrite(in3, HIGH);
+    digitalWrite(HBRIDGE_DIR1_PIN, HIGH);
   }
 
-  if (!digitalRead(in4)) {
-    digitalWrite(in4, HIGH);
+  if (!digitalRead(HBRIDGE_DIR2_PIN)) {
+    digitalWrite(HBRIDGE_DIR2_PIN, HIGH);
   } else {
-    digitalWrite(in4, LOW);
+    digitalWrite(HBRIDGE_DIR2_PIN, LOW);
   }
 
-  analogWrite(GSM2, motorSpeed);
+  analogWrite(HBRIDGE_ENABLE_PIN, motorSpeed);
 }
 
 //void updateDetectedColorFromTempStoredColor(int i) {
