@@ -45,8 +45,8 @@ I know, this isn't nice looking.
 ![alt text](https://github.com/HEN3DRIK/BeadSorter/blob/main/beadsorter_schema.png?raw=true)
 
 # Printing Guide
-Once you copied the STL files from the reference project into their respective directory launch the script ExtractParts.bat (double click on it).
-The table below refers to parts in to TO_PRINT folder.
+Once you copied the STL files from the reference project into their respective directory launch the script ExtractParts.bat (double click on it) in the STLs folder.
+The table below refers to parts in the STLs/TO_PRINT folder.
 
 Part | Quantity
 --- | ---
