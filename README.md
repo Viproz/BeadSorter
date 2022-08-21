@@ -1,7 +1,7 @@
  - 👋 Hi, I’m @HEN3DRIK
  - 👀 I’m interested in 3DPrinting and Electroforming/Electroplating
  - 📫 How to reach me 
-   -  Youtube https://www.youtube.com/c/v0g3l
+   - Youtube https://www.youtube.com/c/v0g3l
    - Twitter https://twitter.com/v0g3l
 
 # BeadSorter
@@ -13,11 +13,14 @@ Nice to have you here. In this repository I keep the files that are necessary fo
 # References
 These are Projects necessary for this beadsorter to work.
 
+To simplify the printing process you can download these project in their respective folders in this repository.
+
 Original Project by Linus Barth:
-[BeadSort: Machine for sorting perler beads by LinusB - Thingiverse](https://www.thingiverse.com/thing:2598302)
+[BeadSort: Machine for sorting perler beads by LinusB - Thingiverse](https://www.thingiverse.com/thing:2598302) follow the process [here](STLs/LinusB/README.md).
 
 Modified to skip aligner phase by RichA777
-[Bead Sorter modified to skip aligner phase by RichA777 - Thingiverse](https://www.thingiverse.com/thing:4507571)
+[Bead Sorter modified to skip aligner phase by RichA777 - Thingiverse](https://www.thingiverse.com/thing:4507571) follow the process [here](STLs/RichA777/README.md).
+
 # Parts List
 You'll need electronic parts for this bead sorter. This is alist of what i used in this project. I belive some components can be substituted.
 
@@ -42,46 +45,49 @@ I know, this isn't nice looking.
 ![alt text](https://github.com/HEN3DRIK/BeadSorter/blob/main/beadsorter_schema.png?raw=true)
 
 # Printing Guide
-## Printing Linus Barth Parts
-Print everything but the following Parts:
-- 0-hopper-seq-plate.stl
-- 0-hopper.stl
-- 1-sequentializer-base.stl
-- 1-sequentializer-ilc-corner.stl
-- 1-sequentializer-tube-inset.stl
-- 2-*.stl
-- 3-analyzer-entry-tube.stl
-- 4-dispatcher-tube-holder.stl
-- 4-dispatcher-servo-holder.stl
-- 4-dispatcher-base.stl
-- 5-outputs-base.stl
-- 5-outputs-slide-1.stl
-- 5-outputs-slide-2.stl
-- 5-outputs-slide-3.stl
-- rpi-holder.stl
+Once you copied the STL files from the reference project into their respective directory launch the script ExtractParts.bat (double click on it).
+The table below refers to parts in to TO_PRINT folder.
 
-## Printing RichA777 parts
-Print the following parts
-- 0-hopper-seq-plate-4_holes_modified
-- Sequencer_base_modified
-- 0_Hopper_Modified_Cleaned_up
-
-## Printing my parts
-Print:
-- 4x 1-sequentializer-ilc-corner_for_higher_motor.stl
-- ring_container.stl
-- 4_Stepper_shaft.stl
-- Stepper_shaft_ring.stl
-- Servo_base2.stl
-- Stepper_shaft_ring.stl
-- 3-analyzer-entry-tube_modified.stl
-- UM2-Sequencer_tube_modified_tighter_Higher_Motor.stl
-- 5-outputs-slide-1.stl
-- 5-outputs-slide-2.stl
-- 5-outputs-slide-3.stl
-- holder_typeA.stl
-- holder_typeB.stl
-- Plate.stl
-- Box_bottom.stl
-- Box_lid.stl
-- Box_top.stl
+Part | Quantity
+--- | ---
+0-hopper-seq-plate-4_holes_modified.stl              | 1
+0-hopper-seq-stopper.stl                             | 1
+1-sequentializer-ilc-bottom.stl                      | 1
+1-sequentializer-ilc-corner_for_higher_motor.stl     | 4
+1-sequentializer-ilc-top.stl                         | 1
+1-sequentializer-motor-holder.stl                    | 1
+3-analyzer-base.stl                                  | 1
+3-analyzer-entry-tube_modified.stl                   | 1
+3-analyzer-exit-base.stl                             | 1
+3-analyzer-exit-tube.stl                             | 1
+3-analyzer-ilc-bottom.stl                            | 1
+3-analyzer-ilc-corner.stl                            | 4
+3-analyzer-ilc-top.stl                               | 1
+3-analyzer-separation-arm.stl                        | 1
+3-analyzer-servo-holder.stl                          | 1
+3-analyzer-top-alignment.stl                         | 1
+4_Stepper_shaft.stl                                  | 1
+4-dispatcher-ilc-bottom.stl                          | 1
+4-dispatcher-ilc-corner.stl                          | 4
+4-dispatcher-ilc-top.stl                             | 1
+4-dispatcher-tube-alignment.stl                      | 1
+4-dispatcher-tubehalf-1.stl                          | 1
+4-dispatcher-tubehalf-2.stl                          | 1
+5-outputs-ilc-corner.stl                             | 4
+5-outputs-ilc-top.stl                                | 1
+5-outputs-slide-1.stl                                | 4
+5-outputs-slide-2.stl                                | 4
+5-outputs-slide-3.stl                                | 4
+Box_bottom.stl                                       | 1
+Box_lid.stl                                          | 1
+Box_top.stl                                          | 1
+holder_typeA.stl                                     | 1
+holder_Typeb.stl                                     | 1
+Hopper_Modified_Cleaned_up.stl                       | 1
+Plate.stl                                            | 1
+ring_container.stl                                   | 1
+Sequencer_base_modified.stl                          | 1
+Servo_base2.stl                                      | 1
+Stepper_shaft_ring.stl                               | 1
+UM2_Sequencer_tube_modified_tighter_Higher_Motor.stl | 1
+TOTAL                                                | 61
