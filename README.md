@@ -46,6 +46,7 @@ I know, this isn't nice looking.
 
 # Printing Guide
 Once you copied the STL files from the reference project into their respective directory launch the script ExtractParts.bat (double click on it) in the STLs folder.
+
 The table below refers to parts in the STLs/TO_PRINT folder.
 
 Part | Quantity

@@ -9,7 +9,7 @@
 #define motorInterfaceType 1  // Stepper parameter
 #define stepperMulti 100      // Stepper another parameter
 
-#define motorSpeed 255        // Container Motor
+#define motorSpeed 120        // Container Motor
 #define HBRIDGE_ENABLE_PIN 4  // Container Motor PWM
 #define HBRIDGE_DIR1_PIN 25   // H Bridge input direction
 #define HBRIDGE_DIR2_PIN 32   // H Bridge input direction
@@ -20,13 +20,13 @@
 #define PHOTO_SENSOR_PIN A0  // Photo Sensor
 #define nullScanOffset 200
 
-#define ANGLE 15  // Servo step angle
+#define ANGLE 95  // Servo step angle
 
 void addColor();
 void servoFeedIn();
 void servoFeedOut();
 void readColorSensor();
-int addColorToMedianColors(int noOfTest);
+void addColorToMedianColors(int noOfTest);
 int getNextFreeArrayPlace();
 void clearMedianColors();
 void calcMedianAndStore();
@@ -100,6 +100,20 @@ void setup() {
 
     // Serial.println("Analyzer start");
     servo.attach(SERVO_PIN);
+
+    Serial.print("Servo at ");
+    Serial.println(servo.read());
+    startMotor();
+    sleep(10);
+
+    // int angle = ANGLE;
+    // while(true) {
+    //     servo.write(angle);
+    //     angle+=10;
+    //     Serial.println(angle);
+    //     sleep(1);
+    //     reverseContainerMotor();
+    // }
     servo.write(ANGLE);
 
     // stepper.setMaxSpeed(4000);
@@ -112,7 +126,7 @@ void setup() {
         Serial.println("Sensor found");
     } else {
         Serial.println("TCS34725 not found ... exiting!");
-        while (1)
+        //while (1)
             ;  // Stop program
     }
 
@@ -139,6 +153,11 @@ void setup() {
 }
 
 void loop() {
+    // stepper.setSpeed(100);
+    // stepper.runSpeed();
+    // return;
+
+
     Serial.println("Loop start");
     photoSensor = analogRead(PHOTO_SENSOR_PIN);
     // Serial.println("");Serial.println(photoSensor);
@@ -238,31 +257,23 @@ void addColor() {
 
 void servoFeedIn() {
     delay(200);
-    servo.write(16);
+    servo.write(ANGLE+1);
     delay(200);
-    servo.write(18);
+    servo.write(ANGLE+3);
     delay(200);
-    servo.write(17);
+    servo.write(ANGLE+2);
     delay(200);
 }
 
 void servoFeedOut() {
-    servo.write(41);
-    delay(200);
-    servo.write(44);
-    delay(200);
-    servo.write(41);
-    delay(200);
-    servo.write(44);
-    delay(200);
-    servo.write(41);
-    delay(200);
-    servo.write(44);
-    delay(200);
-    servo.write(41);
-    delay(200);
-    servo.write(44);
-    delay(500);
+    int center = 28;
+    for(int i = 0 ; i < 4 ; ++i) {
+        servo.write(ANGLE+center-3);
+        delay(200);
+        servo.write(ANGLE+center+3);
+        delay(200);
+    }
+    delay(300);
 }
 
 void readColorSensor() {
@@ -277,7 +288,7 @@ void readColorSensor() {
     resultColor[3] = blue;
 }
 
-int addColorToMedianColors(int noOfTest) {
+void addColorToMedianColors(int noOfTest) {
     medianColors[noOfTest][0] += resultColor[0];
     medianColors[noOfTest][1] += resultColor[1];
     medianColors[noOfTest][2] += resultColor[2];
